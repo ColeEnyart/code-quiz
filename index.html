@@ -5,11 +5,34 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Code Quiz</title>
+    <link rel="stylesheet" href="./assets/css/reset.css">
     <link rel="stylesheet" href="./assets/css/style.css" />
 </head>
 <body>
+    <header>
+        <a href="#">View Highscores</a>
+        <h1>Star Wars Quiz</h1>
+        <div id="countdown"></div>
+    </header>
     
+    <main id="default" class="main">
+        <h2>Timed Quiz</h2>
+        <p>This is info about the timed quiz, ~good luck~!</p>
+        <button onclick="countdown(); toggleQuiz()" id="startButton">Start</button>
+    </main>
 
+    <section hidden id="quiz" class="main question">
+        <h2>Question</h2>
+        <p id="question"></p>
+        <button id="button1"></button>
+        <button id="button2"></button>
+        <button id="button3"></button>
+        <button id="button4"></button>
+    </section>
+
+    <section hidden id="results" class="main end">
+        <h1>End</h1>
+    </section>
 
     <script src="./assets/js/script.js"></script>
 </body>
