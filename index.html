@@ -12,31 +12,41 @@
 
 <body>
     <header>
-        <a href="#">View Highscores</a>
-        <h1>Star Wars Quiz</h1>
+        <a href="javascript: toggleScore()">View Highscores</a>
+        <h1>Coding Quiz</h1>
         <div id="countdown"></div>
     </header>
 
-    <main id="default" class="main">
-        <h2>Timed Quiz</h2>
-        <p>This is info about the timed quiz, ~good luck~!</p>
-        <button id="startButton">Start</button>
-    </main>
+    <main>
+        <section id="default" class="main">
+            <h2>Timed Quiz</h2>
+            <p>Try to get a high score in this coding quiz before time runs out, ~good luck~!</p>
+            <button id="startButton">Start</button>
+        </section>
 
-    <section id="quiz" class="main question">
-        <h2>Question</h2>
-        <p id="question"></p>
-        <button id="button1"></button>
-        <button id="button2"></button>
-        <button id="button3"></button>
-        <button id="button4"></button>
-    </section>
+        <section id="quiz" class="main question">
+            <h2>Question</h2>
+            <p id="question"></p>
+            <button id="button1"></button>
+            <button id="button2"></button>
+            <button id="button3"></button>
+            <button id="button4"></button>
+        </section>
 
-    <section id="results" class="main end">
-        <h2>End</h2>
+        <section id="results" class="main end">
+            <h2>End</h2>
             <div id="showScore"></div>
+            <div id="saveScore">
+                <label for="initials">Enter Initials:</label> <input id="initials" type="text">
+                <button>Save Highscore</button>
+            </div>
+        </section>
+
+        <section id="highScore" class="main save">
+            <ol></ol>
             <button id="playAgain">Play Again</button>
-    </section>
+        </section>
+    </main>
 
     <script src="./assets/js/script.js"></script>
 </body>

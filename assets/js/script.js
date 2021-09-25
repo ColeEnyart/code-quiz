@@ -5,7 +5,9 @@ var el = {
     end: document.getElementById('results'),
     showScore: document.getElementById('showScore'),
     start: document.getElementById('startButton'),
-    playAgain: document.getElementById('playAgain')
+    playAgain: document.getElementById('playAgain'),
+    saveScore: document.querySelector('#saveScore button'),
+    highScore: document.getElementById('highScore')
 }
 
 var ask = {
@@ -22,13 +24,50 @@ ask.button1.addEventListener('click', onChoice, false);
 ask.button2.addEventListener('click', onChoice, false);
 ask.button3.addEventListener('click', onChoice, false);
 ask.button4.addEventListener('click', onChoice, false);
+el.saveScore.addEventListener('click', saveScore, false);
 
-var timeLeft = 20;
+
+var timeLeft = 0;
 var score = 0;
-var currentQuestion = 0;
+var currentQuestion;
+var highScore = 0;
+var timeInterval;
+
+function saveScore() {
+    el.saveScore.disabled = true;
+
+    var initials = document.getElementById('initials').value;
+    var result = { initials: initials, score: score, when: Date.now() };
+    var saved = localStorage.getItem('scores');
+
+    if (saved === null) {
+        saved = JSON.stringify([result]);
+        localStorage.setItem("scores", saved);
+        return;
+    }
+
+    var scores = JSON.parse(saved);
+    scores.push(result);
+    scores.sort((a, b) => {
+        if (a.score > b.score) { return -1; }
+        if (a.score < b.score) { return 1; }
+
+        if (a.when > b.when) { return -1; }
+        if (a.when < b.when) { return 1; }
+
+        return 0;
+    });
+
+    saved = JSON.stringify(scores);
+    localStorage.setItem("scores", saved);
+
+    toggleScore();
+}
 
 function quiz() {
-    countdown();
+    currentQuestion = 0;
+    score = 0;
+    startTimer();
     toggleQuiz();
     askQuestion();
 }
@@ -65,7 +104,6 @@ function onChoice(e) {
         chosen = 3;
     }
 
-    console.log("Answered " + chosen);
     // compare button to answer and score
     if (chosen === myQuestions[currentQuestion].answer) {
         score++;
@@ -85,7 +123,7 @@ function onChoice(e) {
 
 function askQuestion() {
     var current = myQuestions[currentQuestion];
-    console.log("askQuestion ", currentQuestion);
+
     ask.question.textContent = current.question;
     ask.button1.textContent = current.choices[0];
     ask.button2.textContent = current.choices[1];
@@ -94,40 +132,55 @@ function askQuestion() {
 }
 
 function toggleQuiz() {
-    var quizDisplay = el.quiz.style.display = "none";
+    el.quiz.style.display = "flex";
+    el.defaultEl.style.display = "none";
+    el.end.style.display = "none";
+    el.highScore.style.display = "none";
 
-    if (quizDisplay == "none") {
-        el.quiz.style.display = "flex";
-        el.defaultEl.style.display = "none";
-        el.end.style.display = "none";
-    }
 }
 
 function toggleEnd() {
-    ask.button1.disabled = true;
-    ask.button2.disabled = true;
-    ask.button3.disabled = true;
-    ask.button4.disabled = true;
+    el.saveScore.disabled = false;
+    el.showScore.textContent = "Score: " + score;
+    el.end.style.display = "flex";
+    el.quiz.style.display = "none";
+    el.defaultEl.style.display = "none";
+    el.highScore.style.display = "none";
 
-    el.showScore.textContent = score;
-    var endDisplay = el.end.style.display = "none";
-
-    if (endDisplay == "none") {
-        el.end.style.display = "flex";
-        el.quiz.style.display = "none";
-    }
+    clearInterval(timeInterval);
 }
 
-function countdown() {
-    var timeInterval = setInterval(function () {
-        timeLeft--;
-        el.timerEl.textContent = "Time: " + timeLeft;
+function toggleScore() {
+    el.highScore.style.display = "flex";
+    el.end.style.display = "none";
+    el.quiz.style.display = "none";
+    el.defaultEl.style.display = "none";
 
-        if (timeLeft <= 0) {
-            clearInterval(timeInterval);
-            el.timerEl.textContent = "";
-            toggleEnd();
-        }
+    var ol = document.querySelector('#highScore > ol');
+    var scores = JSON.parse(localStorage.getItem('scores'));
+    
+    scores.forEach(element => {
+        var li = document.createElement("li");
+        var text = document.createTextNode(element.initials + " " + element.score);
+        li.appendChild(text);
+        ol.appendChild(li);
+        
+    });
+}
 
-    }, 1000);
+function startTimer() {
+    timeLeft = 21;
+    timeInterval = setInterval(timerTick, 1000);
+}
+
+
+function timerTick() {
+    timeLeft--;
+    el.timerEl.textContent = "Time: " + timeLeft;
+
+    if (timeLeft <= 0) {
+        el.timerEl.textContent = "";
+        toggleEnd();
+    }
+
 }
